@@ -130,6 +130,14 @@ export class Map {
         /* Will include a logger for debugging purposes, for now using
             Console.log */
     }
+    
+    /**
+     * @function 
+     * @returns {string}
+     * @desc toString override
+     * 
+     * @memberOf Map
+     */
     toString(): string {
         let d_string: string = '';
         for (let y = 0; y < this._h; y++) {
@@ -140,6 +148,53 @@ export class Map {
         }
         return d_string.trim();
     }
+    
+    /**
+     * @function  
+     * @returns {Object}
+     * @desc returns the Upstairs coordinates, or the starting point for the map
+     * 
+     * @memberOf Map
+     */
+    getStartPoint(): {x: number,y: number} {
+        let startPoint: {x: number,y: number};
+        for (let y = 0; y < this._h; y++) {
+            for (let x = 0; x < this._w; x++) {
+                if (this.GetTileChar(this._map[x + this._w * y]) === String.fromCharCode(8689)) {
+                    startPoint = {"x": x, "y": y};
+                }
+            }
+        }
+        return startPoint;
+    }
+    
+    /**
+     * @function 
+     * @param {object} currentPoint
+     * @returns {number}
+     * @desc returns the percentage of completed distance from currentPoint to endPoint
+     * 
+     * @memberOf Map
+     */
+    measureDistanceToEnd(currentPoint: {x: number, y: number}): number {
+        let endPoint: {x: number, y: number};
+        let dist: number = 0;
+        let perc: number = 0;
+        for (let y = 0; y < this._h; y++) {
+            for (let x = 0; x < this._w; x++) {
+                if (this.GetTileChar(this._map[x + this._w * y]) === String.fromCharCode(8689)) {
+                    endPoint = {"x": x, "y": y};
+                }
+            }
+        }
+        if (currentPoint === endPoint) {
+            return 100;
+        }
+        dist = this.distance(currentPoint, endPoint);
+        perc = Math.floor((dist/this.distance(this.getStartPoint(), endPoint))*100);
+        return perc;
+    }
+
     /**
     * @function
     * @desc Initiates the map array. Sets outer most indicies as 'StoneWall', while
@@ -291,7 +346,7 @@ export class Map {
     * @returns {Tile}
     * @desc Retrieves the Tile of the specific index in the _map
     */
-    private getTile(x: number, y: number): Tile {
+    getTile(x: number, y: number): Tile {
         /* Uses a try-catch to catch an index that is out of range */
         try {
             return this._map[x + this._w * y];
@@ -302,6 +357,15 @@ export class Map {
         }
     }
     
+    
+    /**
+     * @function
+     * @private
+     * @param {Tile} t
+     * @returns {string}
+     * @desc gets character for the given tile
+     * @memberOf Map
+     */
     private GetTileChar(t: Tile): string {
         switch (t) {
             case Tile.Empty:
@@ -337,5 +401,19 @@ export class Map {
             default:
                 throw new Error('Invalid index!');
         }
+    }
+    
+    /**
+     * @function 
+     * @private
+     * @param {object} a
+     * @param {object} b
+     * @returns {number}
+     * @desc implementation of distance formula
+     * 
+     * @memberOf Map
+     */
+    private distance(a: {x: number, y: number}, b: {x: number, y: number}): number {
+        return Math.floor(Math.sqrt(Math.pow(b.x-a.x, 2)+Math.pow(b.y-a.y,2)));
     }
 }
