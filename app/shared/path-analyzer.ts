@@ -98,8 +98,6 @@ export class PathAnalyzer {
      * @memberOf PathAnalyzer
      */
     private takeStep(step: string) {
-        let taken: number = 0;
-        let tileWalkedInto: Tile;
         switch (step) {
             case 'U':
                 this.currentPoint.y -= 1;
