@@ -16,5 +16,6 @@ export enum Tile {
     MetalChest,
     Upstairs,
     Downstairs,
+    Walked,
     Empty
 }
