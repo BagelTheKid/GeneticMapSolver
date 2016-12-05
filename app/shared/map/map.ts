@@ -14,6 +14,9 @@ export class Map {
     /** @prop {Array} _map @desc array of Tiles used as the map */
     private _map: Array<Tile>;
     get map() { return this._map; }
+    /** @prop {Array} _map @desc sets the array of Tiles used as the map*/
+    set map(v: Tile[]) { this._map = v; }
+    
     /** @member {Number} @desc room percentage, SUBJECT TO CHANGE */
     private _roomAmount: number;
     private _random: Random = new Random();
@@ -228,9 +231,6 @@ export class Map {
         let width: number = this._random.nextInt32([3, 10]);
         let height: number = this._random.nextInt32([3, 10]);
 
-        const floor: number = Tile.DirtFloor;
-        const Wall = Tile.DirtWall;
-
         let room: Room = new Room(x, y, width, height, dir);
         let innerRoom: Array<Square> = room.room;
 
@@ -253,7 +253,7 @@ export class Map {
             innerRoom.forEach((point) => {
                 let pos = point.x + mapWidth * point.y;
                 this._map[pos] = this.isWall(x, y, width, height, point.x, point.y, dir) ? Tile.DirtWall : Tile.DirtFloor;
-            })
+            });
         }
         return result;
     }
@@ -398,6 +398,8 @@ export class Map {
                 return String.fromCharCode(8689);
             case Tile.Downstairs:
                 return String.fromCharCode(8690);
+            case Tile.Walked:
+                return 'X';
             default:
                 throw new Error('Invalid index!');
         }
